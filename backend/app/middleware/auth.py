@@ -1,7 +1,7 @@
 """JWT authentication and rate limiting middleware"""
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-import jwt
+from jose import jwt
 from typing import Optional, Dict, List
 from datetime import datetime, timedelta
 from collections import defaultdict
