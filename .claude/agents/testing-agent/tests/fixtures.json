@@ -1,0 +1,71 @@
+{
+  "users": [
+    {
+      "email": "test1@example.com",
+      "password": "TestPassword123!",
+      "name": "Test User 1"
+    },
+    {
+      "email": "test2@example.com",
+      "password": "SecurePass456!",
+      "name": "Test User 2"
+    }
+  ],
+  "tasks": [
+    {
+      "title": "Complete project documentation",
+      "description": "Write comprehensive README and API docs",
+      "is_completed": false,
+      "priority": "high"
+    },
+    {
+      "title": "Review pull requests",
+      "description": "Check and merge pending PRs",
+      "is_completed": false,
+      "priority": "medium"
+    },
+    {
+      "title": "Update dependencies",
+      "description": "Run npm and pip updates",
+      "is_completed": true,
+      "priority": "low"
+    },
+    {
+      "title": "Deploy to production",
+      "description": "Deploy both frontend and backend",
+      "is_completed": false,
+      "priority": "high"
+    },
+    {
+      "title": "Write unit tests",
+      "description": "Achieve 90% code coverage",
+      "is_completed": false,
+      "priority": "high"
+    }
+  ],
+  "invalid_tasks": [
+    {
+      "description": "Task without title",
+      "is_completed": false
+    },
+    {
+      "title": "",
+      "description": "Task with empty title"
+    },
+    {
+      "title": 123,
+      "description": "Task with number as title"
+    }
+  ],
+  "edge_cases": {
+    "very_long_title": "A".repeat(1000),
+    "special_characters": "Task with symbols: !@#$%^&*()[]{}|\\:;\"'<>,.?/~`",
+    "unicode_title": "タスク管理 📝 ✅",
+    "sql_injection_attempt": "'; DROP TABLE tasks; --",
+    "xss_attempt": "<script>alert('XSS')</script>",
+    "null_values": {
+      "title": null,
+      "description": null
+    }
+  }
+}

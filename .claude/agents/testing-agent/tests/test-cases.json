@@ -1,0 +1,253 @@
+{
+  "test_suite_name": "Full-Stack Todo App E2E Tests",
+  "description": "Comprehensive end-to-end test suite for Task CRUD and Authentication",
+  "version": "1.0.0",
+  "test_phases": [
+    {
+      "phase": 1,
+      "name": "Health & Connectivity",
+      "tests": [
+        {
+          "name": "API Documentation Accessible",
+          "method": "GET",
+          "endpoint": "/docs",
+          "expected_status": 200
+        },
+        {
+          "name": "API Health Check",
+          "method": "GET",
+          "endpoint": "/health",
+          "expected_status": 200
+        }
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "User Authentication",
+      "tests": [
+        {
+          "name": "User Signup - Valid Credentials",
+          "method": "POST",
+          "endpoint": "/api/auth/signup",
+          "payload": {
+            "email": "{{TEST_USER_EMAIL}}",
+            "password": "{{TEST_USER_PASSWORD}}"
+          },
+          "expected_status": 201,
+          "validate_schema": {
+            "required_fields": ["token", "user"],
+            "field_types": {
+              "token": "str",
+              "user": "dict"
+            }
+          }
+        },
+        {
+          "name": "User Signup - Duplicate Email",
+          "method": "POST",
+          "endpoint": "/api/auth/signup",
+          "payload": {
+            "email": "{{TEST_USER_EMAIL}}",
+            "password": "{{TEST_USER_PASSWORD}}"
+          },
+          "expected_status": 400
+        },
+        {
+          "name": "User Login - Correct Credentials",
+          "method": "POST",
+          "endpoint": "/api/auth/signin",
+          "payload": {
+            "email": "{{TEST_USER_EMAIL}}",
+            "password": "{{TEST_USER_PASSWORD}}"
+          },
+          "expected_status": 200,
+          "save_token": true
+        },
+        {
+          "name": "User Login - Incorrect Password",
+          "method": "POST",
+          "endpoint": "/api/auth/signin",
+          "payload": {
+            "email": "{{TEST_USER_EMAIL}}",
+            "password": "WrongPassword123!"
+          },
+          "expected_status": 401
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "Task CRUD - Create",
+      "requires_auth": true,
+      "tests": [
+        {
+          "name": "Create Task - Valid Data",
+          "method": "POST",
+          "endpoint": "/api/tasks",
+          "payload": {
+            "title": "Test Task 1",
+            "description": "This is a test task"
+          },
+          "expected_status": 201,
+          "save_task_id": "task1"
+        },
+        {
+          "name": "Create Task - Title Only",
+          "method": "POST",
+          "endpoint": "/api/tasks",
+          "payload": {
+            "title": "Minimal Task"
+          },
+          "expected_status": 201,
+          "save_task_id": "task2"
+        },
+        {
+          "name": "Create Task - Empty Title (Should Fail)",
+          "method": "POST",
+          "endpoint": "/api/tasks",
+          "payload": {
+            "title": "",
+            "description": "No title provided"
+          },
+          "expected_status": 422
+        },
+        {
+          "name": "Create Task - Missing Title (Should Fail)",
+          "method": "POST",
+          "endpoint": "/api/tasks",
+          "payload": {
+            "description": "No title field"
+          },
+          "expected_status": 422
+        }
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "Task CRUD - Read",
+      "requires_auth": true,
+      "tests": [
+        {
+          "name": "List All Tasks",
+          "method": "GET",
+          "endpoint": "/api/tasks",
+          "expected_status": 200,
+          "validate_schema": {
+            "response_type": "array"
+          }
+        },
+        {
+          "name": "Get Single Task - Valid ID",
+          "method": "GET",
+          "endpoint": "/api/tasks/{{task1}}",
+          "expected_status": 200,
+          "validate_schema": {
+            "required_fields": ["id", "title"],
+            "field_types": {
+              "id": "int",
+              "title": "str"
+            }
+          }
+        },
+        {
+          "name": "Get Single Task - Non-existent ID",
+          "method": "GET",
+          "endpoint": "/api/tasks/99999",
+          "expected_status": 404
+        }
+      ]
+    },
+    {
+      "phase": 5,
+      "name": "Task CRUD - Update",
+      "requires_auth": true,
+      "tests": [
+        {
+          "name": "Update Task Title",
+          "method": "PUT",
+          "endpoint": "/api/tasks/{{task1}}",
+          "payload": {
+            "title": "Updated Task Title"
+          },
+          "expected_status": 200
+        },
+        {
+          "name": "Mark Task as Complete",
+          "method": "PATCH",
+          "endpoint": "/api/tasks/{{task1}}/complete",
+          "expected_status": 200
+        },
+        {
+          "name": "Update Non-existent Task",
+          "method": "PUT",
+          "endpoint": "/api/tasks/99999",
+          "payload": {
+            "title": "This should fail"
+          },
+          "expected_status": 404
+        }
+      ]
+    },
+    {
+      "phase": 6,
+      "name": "Task CRUD - Delete",
+      "requires_auth": true,
+      "tests": [
+        {
+          "name": "Delete Task - Valid ID",
+          "method": "DELETE",
+          "endpoint": "/api/tasks/{{task2}}",
+          "expected_status": 204
+        },
+        {
+          "name": "Delete Already Deleted Task",
+          "method": "DELETE",
+          "endpoint": "/api/tasks/{{task2}}",
+          "expected_status": 404
+        },
+        {
+          "name": "Delete Non-existent Task",
+          "method": "DELETE",
+          "endpoint": "/api/tasks/99999",
+          "expected_status": 404
+        }
+      ]
+    },
+    {
+      "phase": 7,
+      "name": "Security & Validation",
+      "tests": [
+        {
+          "name": "Access Protected Endpoint Without Token",
+          "method": "GET",
+          "endpoint": "/api/tasks",
+          "expected_status": 401,
+          "skip_auth": true
+        },
+        {
+          "name": "SQL Injection Attempt",
+          "method": "POST",
+          "endpoint": "/api/tasks",
+          "payload": {
+            "title": "'; DROP TABLE tasks; --"
+          },
+          "expected_status": 201,
+          "requires_auth": true,
+          "verify": "Task created but SQL not executed"
+        },
+        {
+          "name": "XSS Attempt",
+          "method": "POST",
+          "endpoint": "/api/tasks",
+          "payload": {
+            "title": "<script>alert('XSS')</script>"
+          },
+          "expected_status": 201,
+          "requires_auth": true,
+          "verify": "Task created but script sanitized"
+        }
+      ]
+    }
+  ],
+  "prompt": "Execute all test phases sequentially. Use the test fixtures from tests/fixtures.json. For each test, use run_api_test, validate responses, and log results. Generate a comprehensive report at the end."
+}
