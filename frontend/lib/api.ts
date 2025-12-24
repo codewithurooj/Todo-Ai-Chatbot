@@ -206,7 +206,7 @@ export interface ChatResponse {
 
 export interface ToolCall {
   tool: string;
-  result?: any;
+  result?: Record<string, unknown>;
   error?: string;
 }
 

@@ -41,7 +41,7 @@ function TaskList({ tasks }: { tasks: Task[] }) {
 
   return (
     <div className="bg-gray-50 rounded-lg p-4 mt-2 space-y-2">
-      {tasks.map((task, index) => (
+      {tasks.map((task) => (
         <div
           key={task.id}
           className="flex items-start space-x-3 p-3 bg-white rounded border border-gray-200"
