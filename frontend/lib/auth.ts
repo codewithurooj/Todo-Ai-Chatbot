@@ -4,10 +4,10 @@
  * Provides JWT-based authentication with session management
  */
 
-import { betterAuth } from "better-auth/client";
+import { createAuthClient } from "better-auth/client";
 
 // Initialize Better Auth client
-export const authClient = betterAuth({
+export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000",
 
   // JWT plugin configuration
