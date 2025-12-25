@@ -21,7 +21,7 @@ function extractTaskList(toolCalls?: ToolCall[]): Task[] | null {
 
   const result = listTasksCall.result;
   if (result.success && result.tasks) {
-    return result.tasks;
+    return result.tasks as Task[];
   }
 
   return null;
