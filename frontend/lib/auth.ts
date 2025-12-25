@@ -44,7 +44,7 @@ export async function getSession() {
  */
 export async function getUserId(): Promise<string | null> {
   const session = await getSession();
-  return session?.user?.id || null;
+  return session?.data?.user?.id || null;
 }
 
 /**
@@ -54,7 +54,7 @@ export async function getUserId(): Promise<string | null> {
  */
 export async function getAuthToken(): Promise<string | null> {
   const session = await getSession();
-  return session?.session?.token || null;
+  return session?.data?.session?.token || null;
 }
 
 /**
@@ -90,7 +90,7 @@ export async function signUp(email: string, password: string, name?: string) {
     const result = await authClient.signUp.email({
       email,
       password,
-      name,
+      name: name || email.split('@')[0], // Use email prefix if name not provided
     });
     return result;
   } catch (error) {
