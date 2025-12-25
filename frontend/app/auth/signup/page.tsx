@@ -21,8 +21,8 @@ export default function SignUpPage() {
       await signUp(email, password, name);
       router.push("/");
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "Failed to create account");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create account");
     } finally {
       setLoading(false);
     }

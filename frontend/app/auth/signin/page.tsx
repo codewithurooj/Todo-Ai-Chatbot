@@ -20,8 +20,8 @@ export default function SignInPage() {
       await signIn(email, password);
       router.push("/");
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "Invalid email or password");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Invalid email or password");
     } finally {
       setLoading(false);
     }
